@@ -1,4 +1,6 @@
-const {pelicula} = require('../models')
+const { pelicula } = require('../models')
+const { categoria } = require('../models')
+
 let self = {}
 
 self.getAll = async function (req, res){
@@ -14,7 +16,7 @@ self.getAll = async function (req, res){
 
         let data = await pelicula.findAll({
             where: filters,
-            attributes: [['id', 'peliculaId'], 'titulo ', 'sinopsis', 'anio', 'poster'],
+            attributes: [['id', 'peliculaId'], 'titulo', 'sinopsis', 'anio', 'poster'],
             include: {
                 model: categoria,
                 as: 'categorias',
@@ -33,12 +35,12 @@ self.get = async function (req, res){
     try{
         let id = req.params.id;
         let data = await pelicula.findByPk(id, {
-            attributes: [['id', 'categoriaId'], 'nombre', 'protegida'],
+            attributes: [['id', 'peliculaId'], 'titulo', 'sinopsis', 'anio', 'poster'],
             include: {
                 model: categoria, 
                 as: 'categorias',
-                attributes: [['id', 'categioriaId'], 'nombre ', 'protegida'],
-            through: {attributes: []}
+                attributes: [['id', 'categoriaId'], 'nombre', 'protegida'],
+                through: {attributes: []}
             }
         });
         if (data)
@@ -46,6 +48,7 @@ self.get = async function (req, res){
         else
         return res.status(404).send()
     }catch(error){
+        console.error(error);
         return res.status(500).json(error)
     }
 }
